@@ -1,6 +1,6 @@
 import tensorflow as tf
 import numpy as np 
-import pandas_datareader as web
+from nsepy import get_history
 from sklearn.preprocessing import MinMaxScaler
 import datetime as dt
 from tensorflow.keras import models
@@ -11,7 +11,7 @@ class RunModel:
     def __init__(self,company):
         self.symbol = company.symbol
 
-    def loadModel(self):
+    def __loadModel(self):
         path = 'lstm/'+self.symbol.lower()+'.'+'json'
         weights = 'lstm/'+self.symbol.lower()+'.'+'h5'
         print(weights)
@@ -23,25 +23,32 @@ class RunModel:
         model.load_weights(weights)
         print("Loaded model from disk")
         return model
-        #  path = 'lstm/'+'model'+company.name
-        # json_file = open('lstm/model.json', 'r')
-        # loaded_model_json = json_file.read()
-        # json_file.close()
-        # model = model_from_json(loaded_model_json)
-        # model.load_weights("lstm/wipro.h5")
-        # print("Loaded model from disk")
-        # return model
-
-    def predictPrice(self):
-        model = self.loadModel()
         
-        start = dt.datetime(2011,1,17) 
-        end = dt.datetime.today()
+
+    def __getEndDate(self,today):
+        end = str(today).split("-")
+        end[-1]=str(int(end[-1])-1)
+        
+        end = list(map(int,end))
+        return end
+
+    def __inputHandler(self):
+      
+        model = self.__loadModel()
+        
+        start = dt.date(2011,1,17)
+        
+        end = self.__getEndDate(dt.date.today())
         print("getting data...")
-        data  = web.DataReader(self.symbol+".NS","yahoo",start,end)
+        self.data  = get_history(
+            symbol=self.symbol, 
+            start=start, 
+            end=dt.date(end[0],end[1],end[2]
+            ))
+        print(self.data.tail())
         scaler = MinMaxScaler(feature_range=(0,1))
         #Create new data frame
-        new_df = data.filter(['Close'])
+        new_df = self.data.filter(['Close'])
         #get the last 60 days closing price values and convert the dataframe to an array
         last_60_days = new_df[-60:].values
         #scaled the data to be values between 0 and 1
@@ -58,6 +65,19 @@ class RunModel:
         pred_price= model.predict(X_test)
         yhat= pred_price[0]
         #undo the scalling
-        pred_price = scaler.inverse_transform(pred_price)
+        self.pred_price = scaler.inverse_transform(pred_price)
+        
+        return self.pred_price
     
-        return pred_price
+    def getPrice(self):
+        price = self.__inputHandler()
+        closePrice = self.data['Close'][-1]
+        priceObj = {
+        'end':"-".join(list(map(str,self.__getEndDate(dt.date.today())))),
+        'endPrice':closePrice,
+        'tommorow':dt.date.today(),
+        'prediction':price[0][0]
+        }
+    
+        return priceObj
+        

@@ -19,7 +19,7 @@ def index(request):
 
         print(company.symbol)
         obj = RunModel(company)
-        predicted = obj.predictPrice()
-        print(predicted[0][0])
-        context['pred_price'] = predicted[0][0]
+        priceObj = obj.getPrice()
+        
+        context['priceObj'] = priceObj
     return render(request,'index.html',context=context)

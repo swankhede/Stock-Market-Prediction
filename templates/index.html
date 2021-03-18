@@ -4,7 +4,8 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <script src="exchangeInfo.js"></script>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
@@ -31,6 +32,8 @@
           </ul>
         </div>
       </nav>
+      <html>
+
     <main class="container m-5">
         <div class="row">
             <!-- Sample Chart -->
@@ -39,55 +42,58 @@
              </div>
                
             </div>
-       <div class="col-lg-12">
-         <div class="container"></div>
-        <form action="" method="POST" class="input-group mb-3">
-          {% csrf_token %}
-        
-           
-            <select class="custom-select" id="inputGroupSelect01" name="option">
-              <option>Choose Company</option>
-              {%  for company in companies %}
-              <option value={{company.id}}>{{company.name}}</option>
-              {% endfor %}
+
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="container"></div>
+             <form action="" method="POST" class="input-group mb-3">
+               {% csrf_token %}
+             
+                
+                 <select class="custom-select" id="inputGroupSelect01" name="option">
+                   <option>Choose Company</option>
+                   {%  for company in companies %}
+                   <option value={{company.id}}>{{company.name}}</option>
+                   {% endfor %}
+                   
+                 </select>
+                 <div class="input-group-append">
+                     <button class="btn  btn-outline-secondary input-group-button" >Submit</label>
+                 </div>
               
-            </select>
-            <div class="input-group-append">
-                <button class="btn  btn-outline-secondary input-group-button" >Submit</label>
+             </form>
             </div>
-         
-        </form>
-       </div>
-        
-       
-    </main>
-    <div class="col-md-6">
-      <div class="container m-5">
-        {% if pred_price %}
-      <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">Today</th>
-            <th scope="col">Tommorows prediction</th>
-            
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th scope="row">{{today}}</th>
-            
-            <td>{{pred_price}}</td>
+             
+         <div class="col-md-6">
            
-          </tr>
-         
-        </tbody>
-      </table>
-      {% endif %}
-      </div>
-      
-    </div>
+           <div class="container m-5 border-2">
+             {% if priceObj %}
+           <table class="table">
+             <thead>
+               <tr>
+                 <th scope="col">Last Close at {{priceObj.end}}</th>
+                 <th scope="col">prediction for {{priceObj.tommorow|date:'Y-m-d'}} </th>
+                 
+               </tr>
+             </thead>
+             <tbody>
+               <tr>
+                 <td>{{priceObj.endPrice}}</th>
+                 
+                 <td>{{priceObj.prediction}}</td>
+                
+               </tr>
+              
+             </tbody>
+           </table>
+           {% endif %}
+           </div>
+           
+         </div>
+          </div>
+       
   
-    
+    </main>
 
 
 
@@ -106,7 +112,7 @@
                 labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange',
             'black','pink','maroon','white','violet','grey'],
                 datasets: [{
-                    label: '# of Votes',
+                    label: 'Dummy Chart',
                     data: [12, 19, 3, 5, 2, 3,15,6,20,23,11,30],
                     backgroundColor: [
                         'rgba(255, 99, 132, 0.2)',
