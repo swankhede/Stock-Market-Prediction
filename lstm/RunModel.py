@@ -45,7 +45,7 @@ class RunModel:
             start=start, 
             end=dt.date(end[0],end[1],end[2]
             ))
-        print(self.data.tail())
+        #print(self.data.tail())
         scaler = MinMaxScaler(feature_range=(0,1))
         #Create new data frame
         new_df = self.data.filter(['Close'])
